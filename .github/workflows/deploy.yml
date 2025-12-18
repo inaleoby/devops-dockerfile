@@ -41,5 +41,8 @@ jobs:
                     username: ${{ secrets.USERNAME }}
                     key: ${{ secrets.KEY }}
                     port: ${{ secrets.PORT }}
-                    script: docker ps -a 
-              
+                    script: | 
+                           docker pull docker.io/${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
+                           docker stop timers || true
+                           docker rm timers || true
+                           docker run -d -p 5555:5555 --name timers docker.io/${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
