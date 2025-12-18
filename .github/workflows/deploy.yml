@@ -21,10 +21,10 @@ jobs:
               run: docker build -t $IMAGE_NAME . 
 
             - name: Tag Images
-              run: docker tag $IMAGE_NAME ${{secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
+              run: docker tag $IMAGE_NAME:latest ${{secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
             
             - name: Login to hub
-              run: echo "${{secrets.HUB_TOKEN }}" | docker login $HUB_URL -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+              run: echo "${{ secrets.HUB_TOKEN }}" | docker login $HUB_URL -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
             - name: Push to regsitry
               run: docker push ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
