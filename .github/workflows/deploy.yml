@@ -1,0 +1,45 @@
+name: TIMER
+
+on:
+    push
+
+env:
+    IMAGE_NAME: timer
+    HUB_URL: docker.io
+
+jobs:
+    BUILD:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Affiher version
+              run: docker --version
+
+            - name: Checkout
+              uses: actions/checkout@v5
+
+            - name: Build image
+              run: docker build -t $IMAGE_NAME . 
+
+            - name: Tag Images
+              run: docker tag $IMAGE_NAME ${{secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
+            
+            - name: Login to hub
+              run: echo "${{secrets.HUB_TOKEN }}" | docker login $HUB_URL -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+            - name: Push to regsitry
+              run: docker push ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
+            
+
+    DEPLOY:
+        needs: BUILD
+        runs-on: ubuntu-latest
+        steps:        
+           - name: Connection au SRV 
+             uses: appleboy/ssh-action@v1
+             with:
+                    host: ${{ secrets.HOST }}
+                    username: ${{ secrets.USERNAME }}
+                    key: ${{ secrets.KEY }}
+                    port: ${{ secrets.PORT }}
+                    script: docker ps -a 
+              
