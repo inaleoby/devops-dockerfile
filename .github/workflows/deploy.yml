@@ -44,12 +44,9 @@ jobs:
 
                     script: | 
                         docker pull docker.io/${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
-
                         docker ps -a
-
                         docker stop timers || true
                         docker rm timers || true
-
                         docker run -d \
                         -p 5555:5555 \
                         --name timers \
